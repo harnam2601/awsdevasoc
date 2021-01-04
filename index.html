@@ -49,9 +49,9 @@
         <div class="col">
           <label for="randomNote" class="badge badge-info">Random</label>
           <textarea name="randomNote" id="randomNote" class="noteText" cols="30" rows="15" readonly></textarea>
-          <button type="button" class="btn btn-warning" id="getRandomBtn">New</button>
-          <button type="button" class="btn btn-warning" id="speechPlayBtn"><i class="fa fa-play"></i></button>
-          <button type="button" class="btn btn-warning" id="speechStopBtn"><i class="fa fa-stop"></i></button>
+          <button type="button" class="btn btn-success" id="getRandomBtn">New</button>
+          <button type="button" class="btn btn-success" id="speechPlayBtn"><i class="fa fa-play"></i></button>
+          <button type="button" class="btn btn-success" id="speechStopBtn"><i class="fa fa-stop"></i></button>
         </div>
       </div>
       <div class="row mt-3 mb-3 hidden" id="allNotesRow">
@@ -85,7 +85,27 @@
         return this.on("click", function(ev) { [b, a][this.$_io ^= 1].call(this, ev) })
       };
 
+      var data;
+      var randomRecord = [];
+
       $(document).ready(()=>{
+
+        $.ajax({
+            method: "POST",
+            url: "/backend.php",
+            data: {
+              action: "getAllNotes",
+            },
+            dataType: "json",
+            success: (response)=>{
+              if(typeof(response.success[0] == 'object' && response.success[0] != 'error' && response.success[0] != '0 results')){
+                data = response.success[0];
+                let randomNoteId = (Math.floor(Math.random() * data.length)+1);
+                randomRecord.push(randomNoteId);
+                $("#randomNote").val(data[randomNoteId-1].note);
+              }
+            }
+          });
 
         $("#speechPlayBtn").on('click', (event) => {
             let text = $("#randomNote").val();
@@ -182,36 +202,20 @@
         });
 
         $("#getRandomBtn").on("click", (event) =>{
-          $.ajax({
-            method: "POST",
-            url: "/backend.php",
-            data: {
-              action: "getRandomNote",
-            },
-            dataType: "json",
-            success: (response)=>{
-              if(response.success[0] == "error"){
-                $("#getRandomBtn").removeClass("btn-warning");
-                $("#getRandomBtn").addClass("btn-danger");
-                setTimeout(()=>{
-                  $("#getRandomBtn").removeClass("btn-danger");
-                  $("#getRandomBtn").addClass("btn-warning");
-                }, 1000);
-              }
-              else{
-                $("#randomNote").val(response.success[0]);
-                $("#getRandomBtn").removeClass("btn-warning");
-                $("#getRandomBtn").addClass("btn-success");
-                setTimeout(()=>{
-                  $("#getRandomBtn").removeClass("btn-success");
-                  $("#getRandomBtn").addClass("btn-warning");
-                }, 1000);
-              }
-            }
-          });
-        });
 
-        $("#getRandomBtn").trigger("click");
+          let randomNoteId = (Math.floor(Math.random() * data.length)+1);
+
+          if(randomRecord.length == data.length){
+            randomRecord = [];
+          }
+
+          while(randomRecord.indexOf(randomNoteId) != -1){
+            randomNoteId = (Math.floor(Math.random() * data.length)+1);
+          }
+
+          randomRecord.push(randomNoteId);
+          $("#randomNote").val(data[randomNoteId-1].note);
+        });
 
       });
       
