@@ -52,6 +52,9 @@
           <button type="button" class="btn btn-success" id="getRandomBtn">New</button>
           <button type="button" class="btn btn-success" id="speechPlayBtn"><i class="fa fa-play"></i></button>
           <button type="button" class="btn btn-success" id="speechStopBtn"><i class="fa fa-stop"></i></button>
+          <label for="noteid" class="badge badge-info">Note ID</label>
+          <input type="text" name="noteid" id="noteid" size="4" maxlength="4">
+          <button type="button" class="btn btn-warning" id="editNote">Edit</button>
         </div>
       </div>
       <div class="row mt-3 mb-3 hidden" id="allNotesRow">
@@ -103,9 +106,22 @@
                 let randomNoteId = (Math.floor(Math.random() * data.length)+1);
                 randomRecord.push(randomNoteId);
                 $("#randomNote").val(data[randomNoteId-1].note);
+                $("#noteid").val(randomNoteId);
               }
             }
           });
+        
+        $("#editNote").on('click', (event) => {
+          if(event.target.innerText == 'Edit'){
+            $("#randomNote").prop("readonly", false);
+            $("#editNote").text("Save");
+          }
+          else if(event.target.innerText == 'Save'){
+            $("#randomNote").prop("readonly", true);
+            $("#editNote").text("Edit");
+          }
+
+        });
 
         $("#speechPlayBtn").on('click', (event) => {
             let text = $("#randomNote").val();
@@ -215,6 +231,7 @@
 
           randomRecord.push(randomNoteId);
           $("#randomNote").val(data[randomNoteId-1].note);
+          $("#noteid").val(randomNoteId);
         });
 
       });
