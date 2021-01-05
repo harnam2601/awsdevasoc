@@ -117,10 +117,47 @@
             $("#editNote").text("Save");
           }
           else if(event.target.innerText == 'Save'){
-            $("#randomNote").prop("readonly", true);
-            $("#editNote").text("Edit");
+            $.ajax({
+            method: "POST",
+            url: "/backend.php",
+            data: {
+              action: "editNote",
+              noteid: $("#noteid").val(),
+              note: $("#randomNote").val()
+            },
+            dataType: "json",
+            success: (response)=>{
+              if(response.success[0] == "One row updated"){
+                data[parseInt($("#noteid").val()) - 1].note = $("#randomNote").val();
+                $("#editNote").text("Saved");
+                $("#editNote").removeClass("btn-warning");
+                $("#editNote").addClass("btn-success");
+                $("#randomNote").prop("readonly", true);
+                setTimeout(()=>{
+                  $("#editNote").text("Edit");
+                  $("#editNote").removeClass("btn-success");
+                  $("#editNote").addClass("btn-warning");
+                }, 1000);
+              }
+              else{
+                $("#editNote").text("Error");
+                $("#editNote").removeClass("btn-warning");
+                $("#editNote").addClass("btn-danger");
+                $("#randomNote").prop("readonly", true);
+                setTimeout(()=>{
+                  $("#editNote").text("Edit");
+                  $("#editNote").removeClass("btn-danger");
+                  $("#editNote").addClass("btn-warning");
+                }, 1000);
+              }
+            }
+          });
           }
 
+        });
+
+        $("#noteid").on('blur', (event) => {
+          $("#randomNote").val(data[parseInt($("#noteid").val()) - 1].note);
         });
 
         $("#speechPlayBtn").on('click', (event) => {
@@ -171,6 +208,7 @@
                 $("#viewAllNotesTable").html("No Data");
               }
               else{
+                data = response.success[0];
                 let tableData = "";
                 response.success[0].forEach((value, index) => {
                   tableData = tableData + `
