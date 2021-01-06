@@ -71,6 +71,17 @@ function getAllNotes(){
     return $data;
 }
 
+function editNote($id, $note){
+    global $dbCon, $response;
+    $sql = "UPDATE epiz_26115994_awsDevAsoc.awsDevAsocNotes SET note = \"".$note."\" WHERE id = ".$id;
+    if($dbCon->query($sql) === FALSE){
+        array_push($response["error"], "SQL query error: ".$sql." ".$dbCon->error);
+        return FALSE;
+    }
+    array_push($response["success"], "One row updated");
+    return TRUE;
+}
+
 if(initDBConnection()){
     switch($_POST['action']){
         case "saveNewNote": saveNewNote($_POST["newNoteContent"]);
@@ -79,6 +90,8 @@ if(initDBConnection()){
                               break;
         case "getAllNotes": array_push($response["success"], getAllNotes());
                             break;
+        case "editNote": editNote($_POST["noteid"], $_POST["note"]);
+                         break;
         default: array_push($response["error"], "Invalid Action");
     }
     $dbCon->close();

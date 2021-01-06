@@ -52,6 +52,9 @@
           <button type="button" class="btn btn-success" id="getRandomBtn">New</button>
           <button type="button" class="btn btn-success" id="speechPlayBtn"><i class="fa fa-play"></i></button>
           <button type="button" class="btn btn-success" id="speechStopBtn"><i class="fa fa-stop"></i></button>
+          <label for="noteid" class="badge badge-info">Note ID</label>
+          <input type="text" name="noteid" id="noteid" size="4" maxlength="4">
+          <button type="button" class="btn btn-warning" id="editNote">Edit</button>
         </div>
       </div>
       <div class="row mt-3 mb-3 hidden" id="allNotesRow">
@@ -103,9 +106,59 @@
                 let randomNoteId = (Math.floor(Math.random() * data.length)+1);
                 randomRecord.push(randomNoteId);
                 $("#randomNote").val(data[randomNoteId-1].note);
+                $("#noteid").val(randomNoteId);
               }
             }
           });
+        
+        $("#editNote").on('click', (event) => {
+          if(event.target.innerText == 'Edit'){
+            $("#randomNote").prop("readonly", false);
+            $("#editNote").text("Save");
+          }
+          else if(event.target.innerText == 'Save'){
+            $.ajax({
+            method: "POST",
+            url: "/backend.php",
+            data: {
+              action: "editNote",
+              noteid: $("#noteid").val(),
+              note: $("#randomNote").val()
+            },
+            dataType: "json",
+            success: (response)=>{
+              if(response.success[0] == "One row updated"){
+                data[parseInt($("#noteid").val()) - 1].note = $("#randomNote").val();
+                $("#editNote").text("Saved");
+                $("#editNote").removeClass("btn-warning");
+                $("#editNote").addClass("btn-success");
+                $("#randomNote").prop("readonly", true);
+                setTimeout(()=>{
+                  $("#editNote").text("Edit");
+                  $("#editNote").removeClass("btn-success");
+                  $("#editNote").addClass("btn-warning");
+                }, 1000);
+              }
+              else{
+                $("#editNote").text("Error");
+                $("#editNote").removeClass("btn-warning");
+                $("#editNote").addClass("btn-danger");
+                $("#randomNote").prop("readonly", true);
+                setTimeout(()=>{
+                  $("#editNote").text("Edit");
+                  $("#editNote").removeClass("btn-danger");
+                  $("#editNote").addClass("btn-warning");
+                }, 1000);
+              }
+            }
+          });
+          }
+
+        });
+
+        $("#noteid").on('blur', (event) => {
+          $("#randomNote").val(data[parseInt($("#noteid").val()) - 1].note);
+        });
 
         $("#speechPlayBtn").on('click', (event) => {
             let text = $("#randomNote").val();
@@ -155,6 +208,7 @@
                 $("#viewAllNotesTable").html("No Data");
               }
               else{
+                data = response.success[0];
                 let tableData = "";
                 response.success[0].forEach((value, index) => {
                   tableData = tableData + `
@@ -215,6 +269,7 @@
 
           randomRecord.push(randomNoteId);
           $("#randomNote").val(data[randomNoteId-1].note);
+          $("#noteid").val(randomNoteId);
         });
 
       });
