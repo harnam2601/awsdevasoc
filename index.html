@@ -162,9 +162,16 @@
 
       $(document).ready(()=>{
 
-        $.when($.get("/tests/1.json"), $.get("/tests/2.json"), $.get("/tests/3.json"), $.get("/tests/4.json")).done((test1, test2, test3, test4)=>{
+        $.when(
+        $.get("/tests/1.json"), 
+        $.get("/tests/2.json"), 
+        $.get("/tests/3.json"), 
+        $.get("/tests/4.json"),
+        $.get("/tests/5.json"),
+        $.get("/tests/6.json")
+        ).done((test1, test2, test3, test4, test5, test6)=>{
 
-          tests = tests.concat(test1[0], test2[0], test3[0], test4[0]);
+          tests = tests.concat(test1[0], test2[0], test3[0], test4[0], test5[0], test6[0]);
 
           let random = Math.floor(Math.random() * tests.length) + 1;
           randomTest.push(random);
