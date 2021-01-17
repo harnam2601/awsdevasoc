@@ -150,6 +150,7 @@
       var tests = [];
       var options = ["A", "B", "C", "D", "E", "F", "G"];
       var score = 0;
+      var questionsChecked = 0;
 
       function select(optId){
          if($("#"+optId).prop('checked')){
@@ -230,29 +231,29 @@
         });
 
         $("#checkTest").on('click', (event) => {
+          questionsChecked++;
           let testid = $("#testid").val();
           let optionType = (JSON.parse(tests[testid][10]).length > 1) ? 'checkbox' : 'radio';
           let answer = JSON.parse(tests[testid][10]);
           let options = $("#options input:"+optionType);
+          let checkedOptions = $("#options input:"+optionType+":checked");
           let result = false;
           for(let i=0; i<options.length; i++){
             if(answer.includes(parseInt(options[i].dataset.option))){
               $("#"+options[i].id+"_content").addClass("right-answer");
-              if(options[i].checked){
-                result = true;
-              }
-              else{
-                result = false;
-              }
             }
             else{
             $("#"+options[i].id+"_content").addClass("wrong-answer");
             }
           }
-          if(result){
+          let checkedAnswer = [];
+          for(let i=0; i<checkedOptions.length; i++){
+            checkedAnswer.push(parseInt(checkedOptions[i].dataset.option));
+          }
+          if(JSON.stringify(answer) == JSON.stringify(checkedAnswer)){
             $("#score").val(++score);
           }
-          $("#outOfScore").val(randomTest.length);
+          $("#outOfScore").val(questionsChecked);
           $("#testExplainationDiv").show();
           $("#explainationContent").html(tests[testid][9]);
         });
