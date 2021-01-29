@@ -46,6 +46,30 @@
         color: orangered;
         font-weight: 500;
       }
+
+      .fw-800{
+        font-weight: 800;
+      }
+
+      .neutral{
+        color: dimgray;
+      }
+
+      .fs-lg{
+        font-size: large;
+      }
+
+      .ml-10{
+        margin-left: 10px;
+      }
+
+      .pass{
+        color: limegreen;
+      }
+
+      .fail{
+        color: orangered;
+      }
     </style>
 
     <title>AWS Developer Associate</title>
@@ -120,6 +144,7 @@
               <input type="text" name="score" id="score" size="3" maxlength="3" value="0" readonly>
               <span id="scoreDivider">/</span>
               <input type="text" name="outOfScore" id="outOfScore" size="3" maxlength="3" value="0" readonly>
+              <span id="scorePercentage" class="fw-800 fs-lg ml-10 neutral"><span id="percentage">0</span>%</span>
             </div>
           </div>
           <div class="hidden" id="testExplainationDiv">
@@ -254,6 +279,22 @@
             $("#score").val(++score);
           }
           $("#outOfScore").val(questionsChecked);
+          $("#percentage").html((score*100/questionsChecked).toFixed(2));
+          if((score*100/questionsChecked).toFixed(2) >= 72){
+            $("#scorePercentage").removeClass("fail");
+            $("#scorePercentage").removeClass("neutral");
+            $("#scorePercentage").addClass("pass");
+          }
+          else if((score*100/questionsChecked).toFixed(2) == 0){
+            $("#scorePercentage").removeClass("pass");
+            $("#scorePercentage").removeClass("fail");
+            $("#scorePercentage").addClass("neutral");
+          }
+          else{
+            $("#scorePercentage").removeClass("pass");
+            $("#scorePercentage").removeClass("neutral");
+            $("#scorePercentage").addClass("fail");
+          }
           $("#testExplainationDiv").show();
           $("#explainationContent").html(tests[testid][9]);
         });
