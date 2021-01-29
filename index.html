@@ -189,15 +189,12 @@
       $(document).ready(()=>{
 
         $.when(
-        $.get("/tests/1.json"), 
-        $.get("/tests/2.json"), 
+        $.get("/tests/7.json"), 
         $.get("/tests/3.json"), 
-        $.get("/tests/4.json"),
-        $.get("/tests/5.json"),
-        $.get("/tests/6.json")
-        ).done((test1, test2, test3, test4, test5, test6)=>{
+        $.get("/tests/9.json")
+        ).done((test7, test3, test9)=>{
 
-          tests = tests.concat(test1[0], test2[0], test3[0], test4[0], test5[0], test6[0]);
+          tests = tests.concat(test7[0], test3[0], test9[0]);
 
           let random = Math.floor(Math.random() * tests.length) + 1;
           randomTest.push(random);
@@ -220,6 +217,23 @@
 
           $("#options").html(str);
         });
+
+        $.when(
+        $.get("/tests/8.json"), 
+        $.get("/tests/4.json"), 
+        $.get("/tests/1.json")
+        ).done((test8, test4, test1)=>{ tests = tests.concat(test8[0], test4[0], test1[0]); });
+
+        $.when(
+        $.get("/tests/14.json"), 
+        $.get("/tests/2.json"),
+        $.get("/tests/13.json"), 
+        $.get("/tests/10.json"),
+        $.get("/tests/5.json"), 
+        $.get("/tests/12.json"),
+        $.get("/tests/11.json"), 
+        $.get("/tests/6.json")
+        ).done((test14, test2, test13, test10, test5, test12, test11, test6)=>{ tests = tests.concat(test14[0], test2[0], test13[0], test10[0], test5[0], test12[0], test11[0], test6[0]); });
 
 
         $("#newTest").on('click', (event) => {
